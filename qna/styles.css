@@ -1,0 +1,245 @@
+:root {
+  --bg: #f7f2ea;
+  --panel: rgba(255, 252, 247, 0.9);
+  --text: #1d1a17;
+  --muted: #6e655b;
+  --line: rgba(48, 36, 20, 0.12);
+  --accent: #d9572b;
+  --accent-dark: #812e17;
+  --accent-soft: rgba(217, 87, 43, 0.12);
+  --green: #47644f;
+  --shadow: 0 24px 54px rgba(54, 37, 18, 0.14);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  font-family: "Noto Sans KR", sans-serif;
+  background:
+    radial-gradient(circle at top right, rgba(217, 87, 43, 0.12), transparent 28%),
+    radial-gradient(circle at bottom left, rgba(71, 100, 79, 0.1), transparent 24%),
+    linear-gradient(135deg, #f9f3ea, #efe7db);
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.board-shell {
+  width: min(1200px, calc(100vw - 24px));
+  margin: 0 auto;
+  padding: 20px 0 34px;
+}
+
+.board-hero,
+.panel,
+.question-card {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.board-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: end;
+  margin-bottom: 18px;
+  padding: 24px;
+  border-radius: 26px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--accent-dark);
+}
+
+.board-hero h1,
+.panel h2,
+.question-card h3 {
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+}
+
+.hero-copy,
+.panel p,
+.question-card p {
+  margin: 0;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.hero-button,
+.ghost-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 46px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.hero-button {
+  background: var(--accent);
+  color: #fff;
+}
+
+.ghost-button {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--line);
+}
+
+.board-grid {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.1fr);
+  gap: 18px;
+}
+
+.panel {
+  padding: 22px;
+  border-radius: 24px;
+}
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: start;
+  margin-bottom: 18px;
+}
+
+.status-badge,
+.question-meta,
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.question-form {
+  display: grid;
+  gap: 14px;
+}
+
+.question-form label {
+  display: grid;
+  gap: 8px;
+  font-weight: 700;
+}
+
+.question-form input,
+.question-form textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.form-message {
+  min-height: 1.5em;
+}
+
+.question-list {
+  display: grid;
+  gap: 14px;
+}
+
+.question-card {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 20px;
+}
+
+.question-card header,
+.answer-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+}
+
+.question-card h3 {
+  font-size: 1.06rem;
+}
+
+.status-pill[data-status="received"] {
+  background: rgba(216, 166, 50, 0.15);
+  color: #875f09;
+}
+
+.status-pill[data-status="ready"] {
+  background: rgba(71, 100, 79, 0.16);
+  color: var(--green);
+}
+
+.status-pill[data-status="answered"] {
+  background: rgba(33, 92, 145, 0.14);
+  color: #175380;
+}
+
+.presenter-only {
+  display: none;
+}
+
+body.presenter-mode .presenter-only {
+  display: block;
+}
+
+body.presenter-mode .hero-button.presenter-label::after {
+  content: " ON";
+}
+
+.meta-text {
+  font-size: 0.9rem;
+}
+
+.empty-state {
+  padding: 18px;
+  border-radius: 18px;
+  border: 1px dashed var(--line);
+  color: var(--muted);
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .board-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .board-hero,
+  .panel-head,
+  .question-card header,
+  .answer-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

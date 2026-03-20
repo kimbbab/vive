@@ -13,63 +13,26 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <main class="board-shell">
-      <section class="board-hero">
-        <div>
-          <p id="page-eyebrow" class="eyebrow">Live Chat</p>
-          <h1 id="page-title">실시간 채팅</h1>
-          <p id="page-copy" class="hero-copy">
-            참여자는 채팅을 남기고, 발표자는 발표자 모드에서 준비 메모와 답변 아이디어를 함께 볼 수 있습니다.
-          </p>
-        </div>
-        <div class="hero-actions">
-          <a id="back-link" class="ghost-button" href="../">발표 화면으로 돌아가기</a>
-          <button id="mode-toggle" class="hero-button" type="button">발표자 준비자료 보기</button>
-        </div>
-      </section>
+    <main class="chat-app">
+      <header id="chat-toolbar" class="chat-toolbar">
+        <a id="back-link" class="toolbar-link" href="../">발표</a>
+        <button id="mode-toggle" class="toolbar-link" type="button">준비자료</button>
+      </header>
 
-      <section class="board-grid">
-        <article class="panel composer-panel">
-          <div class="panel-head">
-            <div>
-              <p class="eyebrow">Composer</p>
-              <h2 id="composer-title">메시지 남기기</h2>
-            </div>
-            <span id="storage-badge" class="status-badge">Local mode</span>
-          </div>
+      <section id="question-list" class="question-list" aria-live="polite"></section>
 
-          <form id="question-form" class="question-form">
-            <label>
-              <span id="author-label">이름</span>
-              <input id="author" name="author" maxlength="24" placeholder="예: 김OO 또는 익명" />
-            </label>
-            <label>
-              <span id="content-label">메시지</span>
-              <textarea
-                id="content"
-                name="content"
-                rows="4"
-                maxlength="500"
-                placeholder="발표 보면서 질문이나 반응을 남겨주세요."
-                required
-              ></textarea>
-            </label>
-            <button id="submit-button" class="hero-button" type="submit">보내기</button>
-            <p id="form-message" class="form-message" aria-live="polite"></p>
-          </form>
-        </article>
-
-        <article class="panel messages-panel">
-          <div class="panel-head">
-            <div>
-              <p class="eyebrow">Messages</p>
-              <h2 id="list-title">채팅 목록</h2>
-            </div>
-            <button id="refresh-button" class="ghost-button" type="button">새로고침</button>
-          </div>
-          <div id="question-list" class="question-list"></div>
-        </article>
-      </section>
+      <form id="question-form" class="composer">
+        <textarea
+          id="content"
+          name="content"
+          rows="2"
+          maxlength="500"
+          placeholder="채팅 입력"
+          required
+        ></textarea>
+        <button id="submit-button" class="send-button" type="submit">입력</button>
+        <p id="form-message" class="form-message" aria-live="polite"></p>
+      </form>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

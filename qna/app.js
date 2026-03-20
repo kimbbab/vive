@@ -1,30 +1,13 @@
 (function () {
   const form = document.querySelector("#question-form");
-  const authorInput = document.querySelector("#author");
   const contentInput = document.querySelector("#content");
   const message = document.querySelector("#form-message");
   const list = document.querySelector("#question-list");
-  const refreshButton = document.querySelector("#refresh-button");
   const modeToggle = document.querySelector("#mode-toggle");
-  const storageBadge = document.querySelector("#storage-badge");
-  const pageEyebrow = document.querySelector("#page-eyebrow");
-  const pageTitle = document.querySelector("#page-title");
-  const pageCopy = document.querySelector("#page-copy");
   const backLink = document.querySelector("#back-link");
-  const composerTitle = document.querySelector("#composer-title");
-  const listTitle = document.querySelector("#list-title");
-  const contentLabel = document.querySelector("#content-label");
+  const toolbar = document.querySelector("#chat-toolbar");
 
-  if (
-    !form ||
-    !authorInput ||
-    !contentInput ||
-    !message ||
-    !list ||
-    !refreshButton ||
-    !modeToggle ||
-    !storageBadge
-  ) {
+  if (!form || !contentInput || !message || !list || !modeToggle || !backLink || !toolbar) {
     return;
   }
 
@@ -36,6 +19,7 @@
   document.body.classList.toggle("embed-mode", isEmbed);
 
   const localStorageKey = "vive-live-chat";
+  const aliasStorageKey = "vive-live-chat-alias";
   const config = window.QNA_SUPABASE_CONFIG || {};
   const hasSupabase =
     typeof window.supabase !== "undefined" &&
@@ -47,86 +31,66 @@
     : null;
 
   let refreshTimer = null;
+  let lastMessageId = "";
 
-  storageBadge.textContent = hasSupabase ? "Supabase mode" : "Local mode";
+  modeToggle.textContent = isPresenter ? "채팅" : "준비자료";
 
-  if (isPresenter) {
-    pageEyebrow.textContent = "Presenter Prep";
-    pageTitle.textContent = "발표자 준비자료";
-    pageCopy.textContent =
-      "참여자 채팅을 보면서 메모와 예상 답변까지 같이 확인하는 발표자용 화면입니다.";
-    composerTitle.textContent = "메시지 직접 추가";
-    listTitle.textContent = "참여자 메시지와 준비 메모";
-    contentLabel.textContent = "메시지 또는 예상 질문";
-    modeToggle.textContent = "참여자 채팅 보기";
-  } else {
-    pageEyebrow.textContent = "Live Chat";
-    pageTitle.textContent = "실시간 채팅";
-    pageCopy.textContent =
-      "참여자는 여기에서 질문이나 반응을 남기면 됩니다. 발표자는 별도의 준비자료 모드에서 메모를 볼 수 있습니다.";
-    composerTitle.textContent = "메시지 남기기";
-    listTitle.textContent = "채팅 목록";
-    contentLabel.textContent = "메시지";
-    modeToggle.textContent = "발표자 준비자료 보기";
-  }
-
-  if (isEmbed && backLink) {
-    backLink.hidden = true;
+  if (isEmbed) {
+    toolbar.hidden = true;
+  } else if (isPresenter) {
+    backLink.href = "../?mode=presenter";
   }
 
   modeToggle.addEventListener("click", () => {
     const target = isPresenter
       ? isEmbed
-        ? "./?embed=1"
-        : "./"
+        ? "./index.html?embed=1"
+        : "./index.html"
       : isEmbed
-        ? "./?mode=presenter&embed=1"
-        : "./?mode=presenter";
+        ? "./index.html?mode=presenter&embed=1"
+        : "./index.html?mode=presenter";
     window.location.href = target;
-  });
-
-  if (backLink && isPresenter && !isEmbed) {
-    backLink.href = "../?mode=presenter";
-  }
-
-  refreshButton.addEventListener("click", () => {
-    loadMessages().catch(handleLoadError);
   });
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const author = authorInput.value.trim() || "익명";
     const content = contentInput.value.trim();
 
     if (!content) {
-      message.textContent = "메시지를 입력해 주세요.";
       return;
     }
 
-    message.textContent = "전송 중...";
+    message.textContent = "";
 
-    const entry = buildEntry(author, content);
+    const entry = buildEntry(getAlias(), content);
 
     try {
       await saveEntry(entry);
       form.reset();
-      message.textContent = "메시지를 전송했습니다.";
-      await loadMessages();
+      await loadMessages(true);
+      contentInput.focus();
     } catch (error) {
-      message.textContent = "메시지 전송 중 오류가 발생했습니다.";
+      message.textContent = "전송 실패";
+    }
+  });
+
+  contentInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      form.requestSubmit();
     }
   });
 
   if (!client) {
     window.addEventListener("storage", (event) => {
       if (event.key === localStorageKey) {
-        loadMessages().catch(handleLoadError);
+        loadMessages(false).catch(handleLoadError);
       }
     });
   }
 
   refreshTimer = window.setInterval(() => {
-    loadMessages().catch(handleLoadError);
+    loadMessages(false).catch(handleLoadError);
   }, 4000);
 
   window.addEventListener("beforeunload", () => {
@@ -134,6 +98,17 @@
       window.clearInterval(refreshTimer);
     }
   });
+
+  function getAlias() {
+    const saved = localStorage.getItem(aliasStorageKey);
+    if (saved) {
+      return saved;
+    }
+
+    const alias = `참여자 ${Math.floor(1000 + Math.random() * 9000)}`;
+    localStorage.setItem(aliasStorageKey, alias);
+    return alias;
+  }
 
   function buildEntry(author, content) {
     const seed = (window.seedAnswers || []).find((item) =>
@@ -148,10 +123,10 @@
       status: seed ? "ready" : "received",
       model_answer: seed
         ? seed.modelAnswer
-        : "발표가 끝난 뒤 답변 포인트를 정리하면 됩니다.",
+        : "발표 후 답변 포인트를 정리하면 됩니다.",
       speaker_note: seed
         ? seed.speakerNote
-        : "발표자 메모가 필요하면 이 메시지를 기준으로 정리하세요.",
+        : "필요하면 발표자 메모를 추가하세요.",
     };
   }
 
@@ -173,20 +148,23 @@
     }
 
     const current = readLocal();
-    current.unshift(entry);
+    current.push(entry);
     localStorage.setItem(localStorageKey, JSON.stringify(current));
   }
 
-  async function loadMessages() {
+  async function loadMessages(forceScroll) {
     const entries = client ? await loadSupabaseEntries() : readLocal();
-    renderEntries(entries);
+    const sorted = entries.slice().sort((a, b) => {
+      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+    });
+    renderEntries(sorted, forceScroll);
   }
 
   async function loadSupabaseEntries() {
     const { data, error } = await client
       .from(config.table || "questions")
       .select("*")
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: true });
 
     if (error) {
       throw error;
@@ -208,62 +186,56 @@
     }
   }
 
-  function renderEntries(entries) {
+  function renderEntries(entries, forceScroll) {
+    const shouldStickToBottom = forceScroll || isNearBottom();
     list.innerHTML = "";
 
     if (!entries.length) {
       const empty = document.createElement("div");
       empty.className = "empty-state";
-      empty.textContent = isPresenter
-        ? "아직 들어온 메시지가 없습니다. 발표 중 채팅이 쌓이면 여기에서 준비 메모와 함께 확인할 수 있습니다."
-        : "아직 채팅이 없습니다. 첫 메시지를 남겨 주세요.";
+      empty.textContent = isPresenter ? "아직 채팅이 없습니다." : "첫 채팅을 입력하세요.";
       list.append(empty);
+      lastMessageId = "";
       return;
     }
 
     entries.forEach((item) => {
       const card = document.createElement("article");
-      card.className = `question-card${isPresenter ? "" : " chat-item"}`;
+      card.className = `chat-card${isPresenter ? " presenter-card" : ""}`;
+
+      const meta = document.createElement("div");
+      meta.className = "chat-meta";
+      meta.textContent = `${item.author || "참여자"} · ${formatDate(item.created_at)}`;
+
+      const chatMessage = document.createElement("div");
+      chatMessage.className = "chat-message";
+      chatMessage.textContent = item.content;
+
+      card.append(meta, chatMessage);
 
       if (isPresenter) {
-        const header = document.createElement("header");
-        const titleWrap = document.createElement("div");
-        const title = document.createElement("h3");
-        title.textContent = item.content;
-
-        const meta = document.createElement("p");
-        meta.className = "meta-text";
-        meta.textContent = `${item.author || "익명"} · ${formatDate(item.created_at)}`;
-        titleWrap.append(title, meta);
-
-        const status = document.createElement("span");
-        status.className = "status-pill";
-        status.dataset.status = item.status || "received";
-        status.textContent = translateStatus(item.status);
-        header.append(titleWrap, status);
-
         const presenterWrap = document.createElement("div");
         presenterWrap.className = "presenter-only";
         presenterWrap.append(
           buildAnswerRow("예상 답변", item.model_answer),
           buildAnswerRow("발표자 메모", item.speaker_note)
         );
-
-        card.append(header, presenterWrap);
-      } else {
-        const meta = document.createElement("p");
-        meta.className = "meta-text";
-        meta.textContent = `${item.author || "익명"} · ${formatDate(item.created_at)}`;
-
-        const chatMessage = document.createElement("div");
-        chatMessage.className = "chat-message";
-        chatMessage.textContent = item.content;
-
-        card.append(meta, chatMessage);
+        card.append(presenterWrap);
       }
 
       list.append(card);
     });
+
+    const newest = entries[entries.length - 1];
+    if (newest) {
+      lastMessageId = newest.id;
+    }
+
+    if (shouldStickToBottom) {
+      requestAnimationFrame(() => {
+        list.scrollTop = list.scrollHeight;
+      });
+    }
   }
 
   function buildAnswerRow(label, text) {
@@ -271,7 +243,7 @@
     row.className = "answer-row";
 
     const labelTag = document.createElement("span");
-    labelTag.className = "question-meta";
+    labelTag.className = "answer-label";
     labelTag.textContent = label;
 
     const content = document.createElement("p");
@@ -281,11 +253,14 @@
     return row;
   }
 
+  function isNearBottom() {
+    const remaining = list.scrollHeight - list.scrollTop - list.clientHeight;
+    return remaining < 80;
+  }
+
   function formatDate(value) {
     try {
       return new Intl.DateTimeFormat("ko-KR", {
-        month: "numeric",
-        day: "numeric",
         hour: "2-digit",
         minute: "2-digit",
       }).format(new Date(value));
@@ -294,19 +269,9 @@
     }
   }
 
-  function translateStatus(status) {
-    if (status === "ready") {
-      return "메모 준비됨";
-    }
-    if (status === "answered") {
-      return "답변 완료";
-    }
-    return "수신됨";
-  }
-
   function handleLoadError() {
-    message.textContent = "목록을 불러오지 못했습니다.";
+    message.textContent = "불러오기 실패";
   }
 
-  loadMessages().catch(handleLoadError);
+  loadMessages(true).catch(handleLoadError);
 })();

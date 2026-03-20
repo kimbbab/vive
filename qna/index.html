@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>발표 질문 게시판</title>
+    <title>실시간 채팅</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -16,53 +16,54 @@
     <main class="board-shell">
       <section class="board-hero">
         <div>
-          <p class="eyebrow">Live Q&amp;A Board</p>
-          <h1>발표 질문 게시판</h1>
-          <p class="hero-copy">
-            휴대폰으로 질문을 올리고, 발표자는 발표자 모드에서 GPT 모범답안과 메모를 함께 확인합니다.
+          <p id="page-eyebrow" class="eyebrow">Live Chat</p>
+          <h1 id="page-title">실시간 채팅</h1>
+          <p id="page-copy" class="hero-copy">
+            참여자는 채팅을 남기고, 발표자는 발표자 모드에서 준비 메모와 답변 아이디어를 함께 볼 수 있습니다.
           </p>
         </div>
         <div class="hero-actions">
-          <a class="ghost-button" href="../">발표 자료로 돌아가기</a>
-          <button id="mode-toggle" class="hero-button" type="button">발표자 모드 보기</button>
+          <a id="back-link" class="ghost-button" href="../">발표 화면으로 돌아가기</a>
+          <button id="mode-toggle" class="hero-button" type="button">발표자 준비자료 보기</button>
         </div>
       </section>
 
       <section class="board-grid">
-        <article class="panel">
+        <article class="panel composer-panel">
           <div class="panel-head">
             <div>
-              <p class="eyebrow">Question Input</p>
-              <h2>질문 남기기</h2>
+              <p class="eyebrow">Composer</p>
+              <h2 id="composer-title">메시지 남기기</h2>
             </div>
             <span id="storage-badge" class="status-badge">Local mode</span>
           </div>
+
           <form id="question-form" class="question-form">
             <label>
-              닉네임
-              <input id="author" name="author" maxlength="24" placeholder="예: 편집팀 김OO" />
+              <span id="author-label">이름</span>
+              <input id="author" name="author" maxlength="24" placeholder="예: 김OO 또는 익명" />
             </label>
             <label>
-              질문 내용
+              <span id="content-label">메시지</span>
               <textarea
                 id="content"
                 name="content"
-                rows="5"
+                rows="4"
                 maxlength="500"
-                placeholder="발표가 끝나기 전에 답변 듣고 싶은 내용을 적어주세요."
+                placeholder="발표 보면서 질문이나 반응을 남겨주세요."
                 required
               ></textarea>
             </label>
-            <button class="hero-button" type="submit">질문 등록</button>
+            <button id="submit-button" class="hero-button" type="submit">보내기</button>
             <p id="form-message" class="form-message" aria-live="polite"></p>
           </form>
         </article>
 
-        <article class="panel">
+        <article class="panel messages-panel">
           <div class="panel-head">
             <div>
-              <p class="eyebrow">Question List</p>
-              <h2>들어온 질문</h2>
+              <p class="eyebrow">Messages</p>
+              <h2 id="list-title">채팅 목록</h2>
             </div>
             <button id="refresh-button" class="ghost-button" type="button">새로고침</button>
           </div>
@@ -73,7 +74,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="./seed-answers.js"></script>
-    <script src="./supabase-config.example.js"></script>
+    <script src="./supabase-config.js"></script>
     <script src="./app.js"></script>
   </body>
 </html>

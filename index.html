@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>바이브코딩 사례 발표</title>
+    <title>Vibe Coding 발표</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -13,9 +13,57 @@
     <link rel="stylesheet" href="./styles/main.css" />
   </head>
   <body>
-    <nav class="top-nav" id="top-nav" aria-label="발표 슬라이드 이동"></nav>
+    <div class="app-shell">
+      <section class="presentation-shell" aria-label="발표 화면">
+        <header class="presentation-topbar">
+          <div>
+            <p class="shell-eyebrow">Vibe Coding Talk</p>
+            <h1 class="shell-title">발표 화면</h1>
+          </div>
+          <div class="stage-actions">
+            <button id="prev-slide" class="stage-button" type="button" aria-label="이전 슬라이드">
+              이전
+            </button>
+            <p id="slide-counter" class="slide-counter" aria-live="polite"></p>
+            <button id="next-slide" class="stage-button" type="button" aria-label="다음 슬라이드">
+              다음
+            </button>
+          </div>
+        </header>
 
-    <main id="slides" class="slides"></main>
+        <nav class="top-nav" id="top-nav" aria-label="슬라이드 이동"></nav>
+
+        <main id="slides" class="slides" aria-live="polite"></main>
+      </section>
+
+      <aside class="chat-shell" aria-label="참여자 채팅">
+        <header class="chat-header">
+          <div>
+            <p class="shell-eyebrow chat-eyebrow">Audience Chat</p>
+            <h2>실시간 채팅</h2>
+            <p class="chat-copy">
+              참여자는 오른쪽 패널에서 바로 채팅하고, 발표자는 필요할 때만 준비자료 모드로 확인하면 됩니다.
+            </p>
+          </div>
+          <div class="chat-actions">
+            <a class="chat-link" href="./qna/index.html" target="_blank" rel="noreferrer">채팅만 열기</a>
+            <a
+              id="presenter-link"
+              class="chat-link presenter-link"
+              href="./qna/index.html?mode=presenter"
+              target="_blank"
+              rel="noreferrer"
+            >
+              발표자 준비자료
+            </a>
+          </div>
+        </header>
+
+        <div class="chat-frame-wrap">
+          <iframe id="chat-frame" class="chat-frame" title="실시간 채팅 패널" loading="lazy"></iframe>
+        </div>
+      </aside>
+    </div>
 
     <script src="./content/presentation-data.js"></script>
     <script src="./scripts/main.js"></script>

@@ -3,23 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vibe Coding 발표</title>
+    <title>발표</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Noto+Sans+KR:wght@400;500;700;800&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles/main.css" />
   </head>
   <body>
     <div class="app-shell">
-      <section class="presentation-shell" aria-label="발표 화면">
+      <section class="presentation-shell" aria-label="발표">
         <header class="presentation-topbar">
-          <div>
-            <p class="shell-eyebrow">Vibe Coding Talk</p>
-            <h1 class="shell-title">발표 화면</h1>
-          </div>
+          <nav class="top-nav" id="top-nav" aria-label="슬라이드 이동"></nav>
           <div class="stage-actions">
             <button id="prev-slide" class="stage-button" type="button" aria-label="이전 슬라이드">
               이전
@@ -31,32 +28,12 @@
           </div>
         </header>
 
-        <nav class="top-nav" id="top-nav" aria-label="슬라이드 이동"></nav>
-
         <main id="slides" class="slides" aria-live="polite"></main>
       </section>
 
-      <aside class="chat-shell" aria-label="참여자 채팅">
-        <header class="chat-header">
-          <div>
-            <p class="shell-eyebrow chat-eyebrow">Audience Chat</p>
-            <h2>실시간 채팅</h2>
-          </div>
-          <div class="chat-actions">
-            <a
-              id="presenter-link"
-              class="chat-link presenter-link"
-              href="./qna/index.html?mode=presenter"
-              target="_blank"
-              rel="noreferrer"
-            >
-              발표자 준비자료
-            </a>
-          </div>
-        </header>
-
+      <aside class="chat-shell" aria-label="채팅">
         <div class="chat-frame-wrap">
-          <iframe id="chat-frame" class="chat-frame" title="실시간 채팅 패널" loading="lazy"></iframe>
+          <iframe id="chat-frame" class="chat-frame" title="채팅 패널" loading="lazy"></iframe>
         </div>
       </aside>
     </div>
